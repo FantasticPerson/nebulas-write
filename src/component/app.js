@@ -3,6 +3,10 @@ import Cookie from 'js-cookie'
 
 import Content from './content'
 import HomePage from './homePage'
+import Article from './article'
+
+import {BrowserRouter,Route,Router} from 'react-router'
+import {createBrowserHistory} from 'history'
 
 class App extends Component {
   constructor() {
@@ -39,6 +43,19 @@ class App extends Component {
       </div>
     );
   }
+
+  // render(){
+  //   const customHistory = createBrowserHistory()
+  //   return (
+  //     <BrowserRouter>
+  //       <Router history={BrowserRouter}>
+  //         <Route path="/home" component={HomePage}></Route>
+  //         <Route path="/article" component={Article}></Route>
+  //         <Route path="/articleItem"></Route>
+  //       </Router>
+  //     </BrowserRouter>
+  //   )
+  // }
 
   renderHomePage(){
     const {route} = this.state

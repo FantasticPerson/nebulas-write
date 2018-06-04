@@ -2,29 +2,35 @@ import React, { Component } from 'react';
 import Article from './article'
 import {getArticles,saveArticle} from '../utils/nebulasUtils'
 import ReactLoading from 'react-loading'
+import StateManager from '../utils/dealWithData'
 
 class Articles extends Component{
     constructor(){
         super()
-        this.state={isLoading:true,articleList:null}
+        this.state={articleList:null}
     }
 
     componentDidMount(){
-        getArticles().then((res)=>{
+        console.log(this)
+        StateManager.getArticleList(this).then(res=>{
+            this.setState({articleList:res})
+        })
+        /*getArticles().then((res)=>{
             this.setState({articleList:res.articles})
         })
         .catch((err)=>{
             console.log(err)
         })
 
-        saveArticle('123','456')
+        saveArticle('123','456')*/
     }
 
     render(){
         const {isLoading,articleList} = this.state
-        if(!isLoading){
+        if(articleList){
+            const {articleClick} = this.props
             let articleListArr = articleList.map(item=>{
-                return <Article key={item.articleId} data={item}></Article>
+                return <Article articleClick={articleClick} key={item.articleId} data={item} key={item.data.id}></Article>
             })
             return (
                 <div>
@@ -33,8 +39,8 @@ class Articles extends Component{
             )
         } else {
             return (
-                <div>
-                    <ReactLoading type={'bars'} color={'#91d5ff'} width={60}></ReactLoading>
+                <div style={{margin:'0 auto',width:'60px'}}>
+                    <ReactLoading type={'spin'} color={'#91d5ff'}  height={100} width={60} delay={0}></ReactLoading>
                 </div>
             )
         }

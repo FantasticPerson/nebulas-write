@@ -99,7 +99,7 @@ export default class Content extends Component{
         if(mode == 'article'){
             return (
                 <div className="articleList">
-                    <Articles></Articles>
+                    <Articles articleClick={this.onArticleClick.bind(this)}></Articles>
                 </div>
             )
         }

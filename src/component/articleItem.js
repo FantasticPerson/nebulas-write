@@ -7,7 +7,7 @@ import '../styles/articleItem.css'
 export default class ArticleItem extends Component{
     constructor(){
         super()
-        this.state = {isLoad:false,isLoading:false,showChildren:false,showComments:false}
+        this.state = {isLoad:false,isLoading:true,showChildren:false,showComments:false}
     }
 
     onShowChildrenClick(){

@@ -3,80 +3,48 @@ import Cookie from 'js-cookie'
 
 import Content from './content'
 import HomePage from './homePage'
-import Article from './article'
+import Articles from './articles'
+import Header from './header'
+import ArticleItems from './articleItems'
+import StateManeger from '../utils/dealWithData'
 
-import {BrowserRouter,Route,Router} from 'react-router'
-import {createBrowserHistory} from 'history'
+import {Route,Router} from 'react-router'
+import {BrowserRouter} from 'react-router-dom'
 
 class App extends Component {
   constructor() {
     super()
+    this.history = StateManeger.getHistory()
+    this.history.listen((location)=>{
+      this.setState({history:{...this.history,location:location}})
+    })
     this.state={
-      route:'homepage'
+      history:{
+        ...this.history
+      }
     }
-  }
-
-
-  onGoClick(){
-    this.setState({route:'content'})
-  }
-
-  showHomePage(){
-    this.setState({route:'homepage'})
   }
 
   componentDidMount(){
-    var login = Cookie.get('hasLogin')
-    Cookie.set('hasLogin','login',{expires:30})
-    if(login == 'login'){
-      this.setState({
-        route:'content'
-      })
-    }
+    this.history.push('/home')
   }
 
-  render() {
+  render(){
+    const {history} = this.state
     return (
       <div className="container">
-        {this.renderHomePage()}
-        {this.renderContent()}
+        <BrowserRouter>
+          <Router history={history}>
+            <div style={{height:'100%'}}>
+              <Header></Header>
+              <Route path="/home" component={HomePage}></Route>
+              <Route path="/article" component={Articles}></Route>
+              <Route path="/articleItem/:id" component={ArticleItems}></Route>
+            </div>
+          </Router>
+        </BrowserRouter>
       </div>
-    );
-  }
-
-  // render(){
-  //   const customHistory = createBrowserHistory()
-  //   return (
-  //     <BrowserRouter>
-  //       <Router history={BrowserRouter}>
-  //         <Route path="/home" component={HomePage}></Route>
-  //         <Route path="/article" component={Article}></Route>
-  //         <Route path="/articleItem"></Route>
-  //       </Router>
-  //     </BrowserRouter>
-  //   )
-  // }
-
-  renderHomePage(){
-    const {route} = this.state
-    if(route === 'homepage'){
-      return(
-        <div style={{height:'100%'}}>
-          <HomePage onGoClick={this.onGoClick.bind(this)}></HomePage>
-        </div>
-      )
-    }
-  }
-
-  renderContent(){
-    const {route} = this.state
-    if(route === 'content'){
-      return (
-        <div style={{height:'100%'}}>
-          <Content showHomePage={this.showHomePage.bind(this)}></Content>
-        </div>
-      )
-    }
+    )
   }
 }
 

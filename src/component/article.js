@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import {Card} from 'antd'
 import '../styles/article.css'
+import StateManager from '../utils/dealWithData'
 
 class Article extends Component{
+    constructor(){
+        super()
+        this.history = StateManager.getHistory()
+    }
     onClick(){
-        const {articleClick} = this.props;
-        articleClick(1)
+        this.history.push(`/articleItem/1`)
     }
 
     render(){

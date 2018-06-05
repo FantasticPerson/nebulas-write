@@ -2,8 +2,14 @@ import React, { Component } from 'react';
 import '../styles/homePage.css'
 import {Button} from 'antd'
 import { Layout } from 'antd';
+import {createBrowserHistory} from 'history'
+import StateManager from '../utils/dealWithData'
 
 export default class HomePage extends Component{
+    constructor(){
+        super()
+        this.history = StateManager.getHistory()
+    }
     render(){
         const nebUrl = "https://nebulas.io/cn/index.html"
         const { Header, Footer, Content } = Layout;
@@ -74,7 +80,10 @@ export default class HomePage extends Component{
     }
 
     onFooterClick(){
-        const {onGoClick} = this.props
-        onGoClick()
+        // debugger
+        this.history.push('/article')
+        // StateManager.setHistory(this.history)
+        // const {onGoClick} = this.props
+        // onGoClick()
     }
 }

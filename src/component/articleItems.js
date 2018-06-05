@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ArticleItem from './articleItem'
+import { Layout,Button,Pagination } from 'antd';
+import '../styles/articleItems.css'
 
 export default class Article extends Component{
     constructor(){
@@ -7,12 +9,20 @@ export default class Article extends Component{
     }
 
     render(){
+        let contentStyle = {padding:'10px',position: 'fixed',top: '115px',bottom: '7px',overflowY: 'auto',width:'800px',margin:'4px auto',left:0,right:0}
         return(
             <div>
-                <ArticleItem></ArticleItem>
-                <ArticleItem></ArticleItem>
-                <ArticleItem></ArticleItem>
-                <ArticleItem></ArticleItem>            
+                <div className="toolbar">
+                    <Button type="primary">阅读模式</Button>
+                    <Button onClick={()=>{}} type="primary" style={{marginLeft:'5px'}}>文章列表</Button>
+                    <Pagination style={{float:'right'}} pageSize={1} defaultCurrent={1} total={10} />
+                </div>
+                <div style={contentStyle}>
+                    <ArticleItem></ArticleItem>
+                    <ArticleItem></ArticleItem>
+                    <ArticleItem></ArticleItem>
+                    <ArticleItem></ArticleItem> 
+                </div>           
             </div>
         )
     }

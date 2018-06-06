@@ -137,7 +137,6 @@ CoWriteContract.prototype = {
             }
             this.articleThumbUps.set(id,thumbUpItem)
         }
-        
     },
     
     saveThumbDown:function(id){

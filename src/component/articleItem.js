@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading'
+import {Button} from 'antd'
 
 import Comments from './comments'
 import '../styles/articleItem.css'
@@ -7,7 +8,7 @@ import '../styles/articleItem.css'
 export default class ArticleItem extends Component{
     constructor(){
         super()
-        this.state = {isLoad:false,isLoading:true,showChildren:false,showComments:false}
+        this.state = {isLoad:false,isLoading:false,showChildren:false,showComments:false}
     }
 
     onShowChildrenClick(){
@@ -41,6 +42,7 @@ export default class ArticleItem extends Component{
                     {
                         showComments ? '' : <span onClick={()=>{this.onShowChildrenClick()}}><i style={{fontSize:'20px',float:'right'}} className={dropdownClass}></i></span>
                     }
+                    <Button type="primary" style={{height:'30px',color:'#FFF'}}>续写</Button>
                     
                 </div>
                 {this.renderChildren()}

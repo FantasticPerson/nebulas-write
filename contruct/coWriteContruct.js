@@ -201,6 +201,10 @@ CoWriteContract.prototype = {
         }
     },
 
+    getArticleById:function(id){
+
+    },
+
     getUserHistory:function(){
         var articleArr = []
         var address = Blockchain.transaction.from;
@@ -215,6 +219,11 @@ CoWriteContract.prototype = {
             }
         }
         return articleArr
+    },
+
+    getThumbDownIds:function(id){
+        var thumbUpItem = this.articleThumbUps.get(id)
+        return thumbUpItem
     },
 
     getThumbUpNum:function(id){

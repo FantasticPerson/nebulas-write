@@ -1,11 +1,28 @@
 import React, { Component } from 'react';
 import { Input,Button } from 'antd';
 import '../styles/comments.css'
+import StateManager from '../utils/dealWithData'
 
 class Comments extends Component{
+    constructor(){
+        super()
+        this.input = React.createRef()
+    }
     onHideComments(){
         const {onShowCommentClick} = this.props;
         onShowCommentClick(true)
+    }
+
+    componentDidMount(){
+
+    }
+
+    onCommentClick(){
+        let value = this.input.input.value.trim()
+        if(value.length > 0){
+            const {onSubmitComment} = this.props
+            onSubmitComment(value)
+        }
     }
 
     render(){
@@ -37,8 +54,8 @@ class Comments extends Component{
                     <p>哥们儿 有意思啊！再来</p>
                 </div>
                 <div>
-                    <Input placeholder="回复内容" style={{width: '650px',marginRight: '20px'}}/>
-                    <Button type="primary">评论</Button>
+                    <Input ref={(input)=>{this.input=input}} placeholder="回复内容" style={{width: '650px',marginRight: '20px'}}/>
+                    <Button type="primary" onClick={this.onCommentClick.bind(this)}>评论</Button>
                 </div>
             </div>
         )

@@ -4,7 +4,9 @@ import {Button,Modal,Input} from 'antd'
 
 import Comments from './comments'
 import '../styles/articleItem.css'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
+import EventBus from '../utils/eventBus'
+import eventBus from '../utils/eventBus';
 
 export default class ArticleItem extends Component{
     constructor(){
@@ -22,6 +24,7 @@ export default class ArticleItem extends Component{
     }
 
     handleModalOk(){
+        const {data} = this.props.data
         let content = this.content.textAreaRef.value.trim()
 
         if(content.length == 0){
@@ -29,15 +32,16 @@ export default class ArticleItem extends Component{
             return
         }
 
-        // saveArticle(title,content).then((res)=>{
-        //     console.log(res)
-        // })
-        // .catch(err=>{
-        //     console.log(err)
-        // })
+        StateManager.saveArticleItem(content,'',data.id).then((res)=>{
+            StateManager.getArticleItemList(data.id).then(()=>{
+                eventBus.emit('enterItem')
+            })
+        })
+        .catch(err=>{
+            console.log(err)
+        })
 
-        this.title.input.value = ''
-        this.content.input.value = ''
+        this.content.textAreaRef.value = ''
         this.handleModalCancel()
     }
 
@@ -57,17 +61,29 @@ export default class ArticleItem extends Component{
 
     onCommentClick(text){
         const {data} = this.props.data
-        StateManager.saveComment(this,data.id,text)
+        StateManager.saveComment(data.id,text).then(()=>{
+            StateManager.updateArticleById(data.id).then(()=>{
+                eventBus.emit('enterItem')
+            })
+        })
     }
 
     onThumbUp(){
         const {data} = this.props.data
-        StateManager.saveThumbUp(this,data.id)
+        StateManager.saveThumbUp(data.id).then(()=>{
+            StateManager.updateArticleById(data.id).then(()=>{
+                eventBus.emit('enterItem')
+            })
+        })
     }
 
     onThumbDown(){
         const {data} = this.props.data
-        StateManager.saveThumbDown(this,data.id)
+        StateManager.saveThumbDown(data.id).then(()=>{
+            StateManager.updateArticleById(data.id).then(()=>{
+                eventBus.emit('enterItem')
+            })
+        })
     }
 
     render(){
@@ -82,15 +98,15 @@ export default class ArticleItem extends Component{
                     <span className="articleItemText">{data.content}</span>
                 </div>
                 <div className="articleItemBtns">
-                    <span onClick={()=>{this.onThumbUp()}}><i style={{verticalAlign:'2px'}} className="icon iconfont icon-good"></i><i className="itemText">{'5'}</i></span>
-                    <span onClick={()=>{this.onThumbDown()}}><i className="icon iconfont icon-bad"></i><i className="itemText">{'5'}</i></span>
+                    <span onClick={()=>{this.onThumbUp()}}><i style={{verticalAlign:'2px'}} className="icon iconfont icon-good"></i><i className="itemText">{data.thumbUpNum}</i></span>
+                    <span onClick={()=>{this.onThumbDown()}}><i className="icon iconfont icon-bad"></i><i className="itemText">{data.thumbDownNum}</i></span>
                     <span onClick={()=>{
                         this.onShowComment()
-                    }}><i className="icon iconfont icon-huifu"></i><i className="itemText">{'5'}</i></span>
+                    }}><i className="icon iconfont icon-huifu"></i><i className="itemText">{data.comments.length}</i></span>
                     {
                         showComments ? '' : <span onClick={()=>{this.onShowChildrenClick()}}><i style={{fontSize:'20px',float:'right'}} className={dropdownClass}></i></span>
                     }
-                    <Button onClick={()=>{this.setState({showModal:true})}} type="dashed" style={{height:'30px',color:'#FFF',position: 'absolute',left: '719px',top: '15px'}}>续写</Button>
+                    <Button onClick={()=>{this.setState({showModal:true})}} type="dashed" style={{height:'30px',color:'#FFF',position: 'absolute',left: '712px',top: '1px'}}>续写</Button>
                     
                 </div>
                 {this.renderChildren()}
@@ -110,11 +126,20 @@ export default class ArticleItem extends Component{
 
     renderComments(){
         const {showComments} = this.state
+        const {comments} = this.props.data.data
         if(showComments){
             return (
-                <Comments onSubmitComment={this.onCommentClick.bind(this)} onShowCommentClick={this.onShowComment.bind(this)}></Comments>
+                <Comments data={comments} onSubmitComment={this.onCommentClick.bind(this)} onShowCommentClick={this.onShowComment.bind(this)}></Comments>
             )
         }
+    }
+
+    onEnterItemClick(id){
+        StateManager.setArticleId(id)
+        StateManager.getArticleItemList().then(()=>{
+            eventBus.emit('enterItem',{id:id})
+            this.setState({showChildren:false})
+        })
     }
 
     renderChildren(){
@@ -132,7 +157,9 @@ export default class ArticleItem extends Component{
                     return (
                         <div className="articleItem" key={item.id}>
                             <p>{`作者：${item.address}`}</p>
-                            <p><i style={{float: 'right',marginTop: '-33px',fontSize: '23px',color: '#91d5ff',cursor:'pointer'}} className="icon iconfont icon-cc-arrow-circle-right"></i></p>
+                            <p>
+                                <i onClick={()=>{this.onEnterItemClick(item.id)}} style={{float: 'right',marginTop: '-33px',fontSize: '23px',color: '#91d5ff',cursor:'pointer'}} className="icon iconfont icon-cc-arrow-circle-right"></i>
+                            </p>
                             <div>
                                 <span className="articleItemText">{item.content}</span>
                             </div>

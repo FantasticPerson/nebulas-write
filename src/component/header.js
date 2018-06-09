@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout,Button,Pagination } from 'antd';
 import '../styles/header.css'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
 
 export default class Head extends Component{
     constructor(){

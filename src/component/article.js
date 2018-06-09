@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import {Card} from 'antd'
 import '../styles/article.css'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
 
 class Article extends Component{
     constructor(){
         super()
         this.history = StateManager.getHistory()
     }
-    onClick(){
+    onItemClick(id){
         const {data} = this.props
-        this.history.push(`/articleItem/${data.id}`)
+        StateManager.setArticleId(id)
+        this.history.push(`/articleItem`)
     }
 
     render(){
@@ -21,7 +22,7 @@ class Article extends Component{
                     <p style={{margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>作者：{data.address}</p>
                     <div className="aContent">{data.content}</div>
                     <div className="aBtns">
-                        <span onClick={()=>{this.onClick()}} style={{float: 'right',marginTop: '-3px'}}>
+                        <span onClick={()=>{this.onItemClick(data.id)}} style={{float: 'right',marginTop: '-3px'}}>
                             <i style={{fontSize: '23px',color: '#91d5ff',cursor:'pointer'}} className="icon iconfont icon-cc-arrow-circle-right"></i>
                         </span>
                     </div>

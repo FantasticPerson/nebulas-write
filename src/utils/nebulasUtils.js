@@ -7,7 +7,7 @@ var Account = Nebulas.Account;
 
 let neb = new Neb(new Nebulas.HttpRequest("https://testnet.nebulas.io"))
 
-const dappAddress = "n213gA7GR7wsnGuVjvjTWxTXcuAttfb4dtx"
+const dappAddress = "n22EqgYQWi9pzwtQVmtkiGGnLip4UUZSjVV"
 
 function doSaveRequest(callFunction,callArgs,functionName){
     let to = dappAddress;
@@ -71,6 +71,12 @@ export function getArticles(){
     let callFunction = "getArticleList";
     let callArgs = `["article","-1"]`;
     return doGetRequest(callFunction,callArgs,'getArticles')
+}
+
+export function getArticleById(id){
+    let callFunction = "getArticleDataById";
+    let callArgs= `[${id}]`
+    return doGetRequest(callFunction,callArgs,`getArticleById-${id}`)
 }
 
 export function getArticleItemList(id){

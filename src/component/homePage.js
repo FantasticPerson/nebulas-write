@@ -3,7 +3,7 @@ import '../styles/homePage.css'
 import {Button} from 'antd'
 import { Layout } from 'antd';
 import {createBrowserHistory} from 'history'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
 
 export default class HomePage extends Component{
     constructor(){

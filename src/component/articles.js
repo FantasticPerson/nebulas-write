@@ -4,7 +4,7 @@ import { Layout,Button,Pagination,Modal,Input  } from 'antd';
 import Article from './article'
 import {getArticles,saveArticle} from '../utils/nebulasUtils'
 import ReactLoading from 'react-loading'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
 
 class Articles extends Component{
     constructor(){
@@ -17,19 +17,11 @@ class Articles extends Component{
     componentDidMount(){
         this._isMounted = true
 
-        StateManager.getArticleList(this).then(res=>{
+        StateManager.getArticleList().then(res=>{
             if(this._isMounted){
                 this.setState({articleList:res})
             }
         })
-        /*getArticles().then((res)=>{
-            this.setState({articleList:res.articles})
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-
-        saveArticle('123','456')*/
     }
 
     componentWillUnmount(){

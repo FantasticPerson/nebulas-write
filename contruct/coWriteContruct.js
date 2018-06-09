@@ -105,7 +105,9 @@ CoWriteContract.prototype = {
         newItem.id = id
         newItem.title = title
 
-        this.articleSize = parseInt(id)
+        if(type == "article"){
+            this.articleSize = parseInt(id)
+        }
 
         this.articles.set(id,newItem)
 
@@ -129,11 +131,11 @@ CoWriteContract.prototype = {
             if(!thumbUpItem){
                 thumbUpItem = ''
             }
-            var index = this._getIdIndexInStr(thumbUpItem,id)
+            var index = this._getIdIndexInStr(thumbUpItem,address)
             if(index >= 0){
                 thumbUpItem = this._deleteIdFromStr(thumbUpItem,index)
             } else {
-                thumbUpItem = this._addIdToString(thumbUpItem,id)
+                thumbUpItem = this._addIdToString(thumbUpItem,address)
             }
             this.articleThumbUps.set(id,thumbUpItem)
         }
@@ -146,11 +148,11 @@ CoWriteContract.prototype = {
             if(!thumbDownItem){
                 thumbDownItem = ''
             }
-            var index = this._getIdIndexInStr(thumbDownItem,id)
+            var index = this._getIdIndexInStr(thumbDownItem,address)
             if(index >= 0){
-                thumbDownItem = this._deleteIdFromStr(thumbDownItem,id)
+                thumbDownItem = this._deleteIdFromStr(thumbDownItem,index)
             } else {
-                thumbDownItem = this._addIdToString(thumbDownItem,id)
+                thumbDownItem = this._addIdToString(thumbDownItem,address)
             }
             this.articleThumbDowns.set(id,thumbDownItem)
         }
@@ -186,7 +188,7 @@ CoWriteContract.prototype = {
             } else {
                 var childIds = this.articleChildIds.get(id)
                 if(childIds){
-                    var ids = childIds.ids.split(',')
+                    var ids = childIds.split(',')
                 }
             }
             for(var i=0;i<ids.length;i++){
@@ -195,14 +197,15 @@ CoWriteContract.prototype = {
                     articleArr.push(item)
                 }
             }
+            
             return articleArr
         } else {
             throw new Error('type is not defined')
         }
     },
 
-    getArticleById:function(id){
-
+    getArticleDataById(id){
+        return this._getArticleDdata(id)
     },
 
     getUserHistory:function(){
@@ -219,11 +222,6 @@ CoWriteContract.prototype = {
             }
         }
         return articleArr
-    },
-
-    getThumbDownIds:function(id){
-        var thumbUpItem = this.articleThumbUps.get(id)
-        return thumbUpItem
     },
 
     getThumbUpNum:function(id){
@@ -272,15 +270,16 @@ CoWriteContract.prototype = {
             var hasThumbUp = this._checkIsThumbUp(id)
             var hasThumbDown = this._checkIsThumbDown(id) 
 
-            return {"data":item,"thumbDownNum":thumbDownNum,"thumbDownNum":thumbDownNum,"hasThumbUp":hasThumbUp,"hasThumbDown":hasThumbDown}
+            return {"data":item,"thumbUpNum":thumbUpNum,"thumbDownNum":thumbDownNum,"hasThumbUp":hasThumbUp,"hasThumbDown":hasThumbDown,'comments':comments}
         }
         return null
     },
+
     _getMaxArticleId:function(pid){
         var maxIdsArr = this.articleItemMaxIds.split('-')
         var level = 0
         if(parseInt(pid) != -1){
-            level = (pid+'').split('-')
+            level = (pid+'').split('-').length
         }
         var id = maxIdsArr[level]
         if(id == undefined ){
@@ -290,7 +289,10 @@ CoWriteContract.prototype = {
         }
         maxIdsArr[level] = id
         this.articleItemMaxIds = maxIdsArr.join('-')
-        return id
+        if(pid == -1){
+            return id
+        }
+        return pid+'-'+id
     },
 
     _addIdToString:function(str,id){
@@ -320,7 +322,7 @@ CoWriteContract.prototype = {
         if(!ids){
             ids = ''
         }
-        this._addIdToString(ids,id)
+        ids = this._addIdToString(ids,id)
         this.articleChildIds.set(pid,ids)
     },
 

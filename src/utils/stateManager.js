@@ -12,7 +12,24 @@ class StateManageMent{
             commentList:[],
             thumbUpList:[],
             thumbDownList:[],
-            routerHistory:routerHistory
+            routerHistory:routerHistory,
+            articleId:null
+        }
+
+        this.resetState = ()=>{
+            this.state.articleList=[]
+            this.state.artilceItemList=[]
+            this.state.commentList=[]
+            this.state.thumbUpList=[]
+            this.state.thumbDownList=[]
+        }
+
+        this.setArticleId =(id)=>{
+            this.state.articleId = id
+        }
+
+        this.getArticleId = ()=>{
+            return this.state.articleId
         }
 
         this.findArticleById=(id)=>{
@@ -21,33 +38,45 @@ class StateManageMent{
             })
         }
 
-        this.formatArticleList =(arr)=>{
+        this.formatArticleList =(arrw)=>{
+            let arr = arrw || []
             return arr.map((data)=>{
                 return {
                     ...data.data,
+                    comments:data.comments,
                     hasThumbDown:data.hasThumbDown,
                     hasThumbUp:data.hasThumbUp,
-                    thumbDownNum:data.thumbDownNum
+                    thumbDownNum:data.thumbDownNum,
+                    thumbUpNum:data.thumbUpNum
                 }
             })
         }
 
         this.mergeArr=(arr1,arr2)=>{
             let mergeArr = []
-            let idArr = []
             for(let i=0;i<arr1.length;i++){
-                mergeArr.push(arr1[i])
-                idArr.push(arr1[i].id)
+                let item = arr2.find((item)=>{
+                    return item.id == arr1[i].id
+                })
+                if(item){
+                    mergeArr.push(item)
+                } else {
+                    mergeArr.push(arr1[i])
+                }
             }
-            for(let i = 0;i<arr2.length;i++){
-                if(idArr.indexOf(arr2[i].id) < 0){
-                    mergeArr.push(arr2[i])
+            for(let j=0;j<arr2.length;j++){
+                let item = mergeArr.find((item)=>{
+                    return item.id == arr2[j].id
+                })
+                if(!item){
+                    mergeArr.push(arr2[j])
                 }
             }
             return mergeArr
         }
 
-        this.enterItem=(id)=>{
+        this.enterItem=(id2)=>{
+            let id = String(this.state.articleId)
             let itemArr = []
             let ids = id.split('-')
             let res = []
@@ -59,7 +88,7 @@ class StateManageMent{
                     let obj = {data:item}
                     if(item.childIds){
                         let children = []
-                        for(let j=0;j<item.childIds.length;i++){
+                        for(let j=0;j<item.childIds.length;j++){
                             let cItem = this.findArticleById(item.childIds[j])
                             if(cItem){
                                 children.push(cItem)
@@ -83,8 +112,9 @@ class StateManageMent{
         this.getArticleList = ()=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getArticles().then(res=>{
-                    console.log(res)
+                    this.resetState()
                     this.state.articleList = this.formatArticleList(res)
+                    console.log(this.state.articleList)
                     resolve(this.state.articleList)
                 })
                 .catch(err=>{
@@ -92,14 +122,39 @@ class StateManageMent{
                 })
             })
         }
-        this.getArticleItemList = (obj,id)=>{
+
+        this.updateArticleById = (id=>{
+            return new Promise((resolve,reject)=>{
+                NebulasUtils.getArticleById(id).then(res=>{
+                    let item = this.findArticleById(id)
+                    if(item){
+                        item.comments=res.comments,
+                        item.hasThumbDown=res.hasThumbDown,
+                        item.hasThumbUp=res.hasThumbUp,
+                        item.thumbDownNum=res.thumbDownNum,
+                        item.thumbUpNum=res.thumbUpNum
+
+                        console.log(item)
+                        resolve()
+                    }
+                })
+                .catch(err=>{
+                    reject(err)
+                })
+            })
+        })
+
+        this.getArticleItemList = ()=>{
+            let id = this.state.articleId
+            console.log('getArticleItemList：'+id)
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getArticleItemList(id).then(res=>{
                     let handledRes = this.formatArticleList(res)
+                    console.log(handledRes)
                     let item = this.findArticleById(id)
                     this.state.articleList = this.mergeArr(this.state.articleList,handledRes)
                     if(item){
-                        item.childIds = res.map((cItem)=>{
+                        item.childIds = handledRes.map((cItem)=>{
                             cItem.pId = id
                             return cItem.id
                         })
@@ -111,10 +166,9 @@ class StateManageMent{
                 })
             })
         }
-        this.getUserHistory = (obj)=>{
+        this.getUserHistory = ()=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getUserHistory().then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -122,10 +176,9 @@ class StateManageMent{
                 })
             })
         }
-        this.getThumbUpNum = (obj,id)=>{
+        this.getThumbUpNum = (id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getThumbUpNum(id).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -133,10 +186,9 @@ class StateManageMent{
                 })
             })
         }
-        this.getThumbDownNum = (obj,id)=>{
+        this.getThumbDownNum = (id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getThumbDownNum(id).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -144,10 +196,9 @@ class StateManageMent{
                 })
             })
         }
-        this.getComments = (obj,id)=>{
+        this.getComments = (id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getComments(id).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -155,10 +206,10 @@ class StateManageMent{
                 })
             })
         }
-        this.saveArticle = (obj,content,title)=>{
+        this.saveArticle = (content,title)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveArticle(content,title).then(res=>{
-                    obj.setState({})
+                    
                     resolve()
                 })
                 .catch(err=>{
@@ -167,10 +218,9 @@ class StateManageMent{
             })
             
         }
-        this.saveArticleItem = (obj,content,title,pId)=>{
+        this.saveArticleItem = (content,title,pId)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveArticleItem(content,title,pId).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -178,10 +228,9 @@ class StateManageMent{
                 })
             })
         }
-        this.saveWriteName=(obj,name)=>{
+        this.saveWriteName=(name)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveWriteName(name).then((res)=>{
-                    obj.stateState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -189,10 +238,9 @@ class StateManageMent{
                 })
             })
         }
-        this.saveThumbUp=(obj,id)=>{
+        this.saveThumbUp=(id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveThumbUp(id).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -200,10 +248,9 @@ class StateManageMent{
                 })
             })
         }
-        this.saveThumbDown=(obj,id)=>{
+        this.saveThumbDown=(id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveThumbDown(id).then(res=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{
@@ -211,10 +258,9 @@ class StateManageMent{
                 })
             })
         }
-        this.saveComment=(obj,id,text)=>{
+        this.saveComment=(id,text)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.saveComment(id,text).then((res)=>{
-                    obj.setState({})
                     resolve()
                 })
                 .catch(err=>{

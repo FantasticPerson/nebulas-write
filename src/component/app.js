@@ -6,7 +6,7 @@ import HomePage from './homePage'
 import Articles from './articles'
 import Header from './header'
 import ArticleItems from './articleItems'
-import StateManeger from '../utils/dealWithData'
+import StateManeger from '../utils/stateManager'
 
 import {Route,Router} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
@@ -39,7 +39,7 @@ class App extends Component {
               <Header></Header>
               <Route path="/home" component={HomePage}></Route>
               <Route path="/article" component={Articles}></Route>
-              <Route path="/articleItem/:id" component={ArticleItems}></Route>
+              <Route path="/articleItem" component={ArticleItems}></Route>
             </div>
           </Router>
         </BrowserRouter>

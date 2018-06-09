@@ -3,23 +3,37 @@ import ArticleItem from './articleItem'
 import { Layout,Button,Pagination } from 'antd';
 import ReactLoading from 'react-loading'
 import '../styles/articleItems.css'
-import StateManager from '../utils/dealWithData'
+import StateManager from '../utils/stateManager'
+import EventBus from '../utils/eventBus'
 
 export default class Article extends Component{
     constructor(){
         super()
         this.history = StateManager.getHistory()
         this.state = {data:null}
+        EventBus.addListener('enterItem',(data)=>{
+            if(this._mounted){
+            let res = StateManager.enterItem()
+                this.setState({data:res})
+            }
+        })
     }
 
     componentDidMount(){
+        this._mounted = true
         let pathname = this.history.location.pathname
         let articleId = pathname.split('/')[2]
 
-        StateManager.getArticleItemList(this,articleId).then(()=>{
-            let data = StateManager.enterItem(articleId)
-            this.setState({data:data})
+        StateManager.getArticleItemList(articleId).then(()=>{
+            if(this._mounted){
+                let data = StateManager.enterItem(articleId)
+                this.setState({data:data})
+            }
         })
+    }
+
+    componentWillUnmount(){
+        this._mounted = false
     }
 
     render(){

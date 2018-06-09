@@ -5,9 +5,9 @@ let nebPay = new NebPay()
 let Neb = Nebulas.Neb
 var Account = Nebulas.Account;
 
-let neb = new Neb(new Nebulas.HttpRequest("https://testnet.nebulas.io"))
+let neb = new Neb(new Nebulas.HttpRequest("https://mainnet.nebulas.io")) //https://mainnet.nebulas.io   https://testnet.nebulas.io
 
-const dappAddress = "n22EqgYQWi9pzwtQVmtkiGGnLip4UUZSjVV"
+const dappAddress = "n1rZsBd7vPrE4R3rEr9pf5S3wvdAnGCHyJ6" //n1rZsBd7vPrE4R3rEr9pf5S3wvdAnGCHyJ6 test:n1sAsGewgwBtdUnvbCjpPzguX5NPhvfcQgt
 
 function doSaveRequest(callFunction,callArgs,functionName){
     let to = dappAddress;

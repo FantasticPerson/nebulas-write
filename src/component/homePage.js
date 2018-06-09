@@ -80,10 +80,6 @@ export default class HomePage extends Component{
     }
 
     onFooterClick(){
-        // debugger
-        this.history.push('/article')
-        // StateManager.setHistory(this.history)
-        // const {onGoClick} = this.props
-        // onGoClick()
+        StateManager.routerPush('/article')
     }
 }

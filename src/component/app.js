@@ -7,15 +7,18 @@ import Articles from './articles'
 import Header from './header'
 import ArticleItems from './articleItems'
 import StateManeger from '../utils/stateManager'
+import Guide from './guide'
 
 import {Route,Router} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
+
 
 class App extends Component {
   constructor() {
     super()
     this.history = StateManeger.getHistory()
     this.history.listen((location)=>{
+      console.log(location)
       this.setState({history:{...this.history,location:location}})
     })
     this.state={
@@ -26,7 +29,20 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.history.push('/home')
+    const {location} = this.state.history
+
+    if(!Cookie.get('hasEntered')){
+      Cookie.set('hasEntered','true',{ expires: 30})
+      StateManeger.routerPush('/home')
+    }
+
+    else {
+      if(location.pathname == StateManeger.getPrefix()){
+        StateManeger.routerPush('/home')
+      } else if(location.pathname == '/articleItem'){
+        StateManeger.routerPush('/article')
+      }
+    }
   }
 
   render(){
@@ -40,6 +56,7 @@ class App extends Component {
               <Route path="/home" component={HomePage}></Route>
               <Route path="/article" component={Articles}></Route>
               <Route path="/articleItem" component={ArticleItems}></Route>
+              <Route path="/guide" component={Guide}></Route>
             </div>
           </Router>
         </BrowserRouter>

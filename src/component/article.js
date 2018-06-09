@@ -11,7 +11,7 @@ class Article extends Component{
     onItemClick(id){
         const {data} = this.props
         StateManager.setArticleId(id)
-        this.history.push(`/articleItem`)
+        StateManager.routerPush('/articleItem')
     }
 
     render(){

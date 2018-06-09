@@ -24,6 +24,17 @@ class StateManageMent{
             this.state.thumbDownList=[]
         }
 
+        this.prefix = '/nebulaecowriter'
+
+        this.routerPush=(path)=>{
+            
+            this.state.routerHistory.push(`${this.prefix}${path}`)
+        }
+
+        this.getPrefix=()=>{
+            return this.prefix
+        }
+
         this.setArticleId =(id)=>{
             this.state.articleId = id
         }
@@ -123,7 +134,7 @@ class StateManageMent{
             })
         }
 
-        this.updateArticleById = (id=>{
+        this.updateArticleById = (id)=>{
             return new Promise((resolve,reject)=>{
                 NebulasUtils.getArticleById(id).then(res=>{
                     let item = this.findArticleById(id)
@@ -142,7 +153,7 @@ class StateManageMent{
                     reject(err)
                 })
             })
-        })
+        }
 
         this.getArticleItemList = ()=>{
             let id = this.state.articleId

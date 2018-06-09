@@ -13,6 +13,10 @@ export default class Head extends Component{
         this.state = {pathname:this.history.location.pathname}
     }
 
+    onNavClick(route){
+        StateManager.routerPush(route)
+    }
+
     render(){
         const {pathname} = this.state
         if(pathname == '/home'){
@@ -38,9 +42,9 @@ export default class Head extends Component{
                     }}>星云共同写作平台</span>
                 </span>
                 <span className="btnContainer">
-                    <span onClick={()=>{this.onBtnClick(0)}} className={'btn selected'}>文章</span>
-                    <span onClick={()=>{this.onBtnClick(1)}} className={'btn selected'}>个人中心</span>
-                    <span onClick={()=>{this.onBtnClick(2)}} className={'btn selected'}>欢迎页</span>
+                    <span onClick={()=>{this.onNavClick('/article')}} className={'btn selected'}>文章</span>
+                    <span onClick={()=>{this.onNavClick('/home')}} className={'btn selected'}>欢迎页</span>
+                    <span onClick={()=>{this.onNavClick('/guide')}} className={'btn selected'}>使用教程</span>
                 </span>
             </Header>
         )

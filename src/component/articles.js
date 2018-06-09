@@ -41,12 +41,19 @@ class Articles extends Component{
             return
         }
 
-        saveArticle(title,content).then((res)=>{
-            console.log(res)
+        StateManager.saveArticle(content,title).then(()=>{
+            StateManager.getArticleList().then(res=>{
+                if(this._isMounted){
+                    this.setState({articleList:res})
+                }
+            })
         })
-        .catch(err=>{
-            console.log(err)
-        })
+        // saveArticle(title,content).then((res)=>{
+        //     console.log(res)
+        // })
+        // .catch(err=>{
+        //     console.log(err)
+        // })
 
         this.title.input.value = ''
         this.content.input.value = ''
@@ -59,7 +66,7 @@ class Articles extends Component{
 
     render(){
         const {isLoading,articleList} = this.state
-        let contentStyle = {padding:'10px',position: 'fixed',top: '65px',bottom: '7px',overflowY: 'auto',width:'800px',margin:'4px auto',left:0,right:0}
+        let contentStyle = {padding:'10px',position: 'fixed',top: '65px',bottom: '7px',overflowY: 'auto',width:'930px',margin:'4px auto',left:0,right:0}
         if(articleList){
             const {articleClick} = this.props
             let articleListArr = articleList.map(item=>{

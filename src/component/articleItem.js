@@ -90,44 +90,68 @@ export default class ArticleItem extends Component{
         const {TextArea} = Input
         const {showChildren,showComments} = this.state
         const {data} = this.props.data
-        let dropdownClass = `icon iconfont icon-downarrow ${showChildren?'':'erase'}`
-        return (
-            <div className="articleItem">
-                <p style={{width:'700px'}}>{`作者：${data.address}`}</p>
-                <div>
-                    <span className="articleItemText">{data.content}</span>
-                </div>
-                <div className="articleItemBtns">
-                    <span onClick={()=>{this.onThumbUp()}}><i style={{verticalAlign:'2px'}} className="icon iconfont icon-good"></i><i className="itemText">{data.thumbUpNum}</i></span>
-                    <span onClick={()=>{this.onThumbDown()}}><i className="icon iconfont icon-bad"></i><i className="itemText">{data.thumbDownNum}</i></span>
-                    <span onClick={()=>{
-                        this.onShowComment()
-                    }}><i className="icon iconfont icon-huifu"></i><i className="itemText">{data.comments.length}</i></span>
-                    {
-                        showComments ? '' : <span onClick={()=>{this.onShowChildrenClick()}}><i style={{fontSize:'20px',float:'right'}} className={dropdownClass}></i></span>
-                    }
-                    <Button onClick={()=>{this.setState({showModal:true})}} type="dashed" style={{height:'30px',color:'#FFF',position: 'absolute',left: '712px',top: '1px'}}>续写</Button>
-                    
-                </div>
-                {this.renderChildren()}
-                {this.renderComments()}
+        const {mode} = this.props
 
-                <Modal 
-                    title="续写" 
-                    visible={this.state.showModal}
-                    onOk={this.handleModalOk.bind(this)}
-                    onCancel={this.handleModalCancel.bind(this)}
-                >
-                    <TextArea ref={(input) => this.content = input} style={{marginTop:'20px'}} placeholder="输入内容"/>
-                </Modal>
-            </div>
-        )
+        let thumbUpColor = {}
+        if(!data.hasThumbUp){
+            thumbUpColor.color = "#eee"
+        }
+
+        let thumbDownColor = {}
+        if(!data.hasThumbDown){
+            thumbDownColor.color = "#eee"
+        }
+
+        let dropdownClass = `icon iconfont icon-downarrow ${showChildren?'':'erase'}`
+        if(mode == 'edit'){
+            return (
+                <div className="articleItem">
+                    <p style={{width:'700px'}}>{`作者：${data.address}`}</p>
+                    <div>
+                        <span className="articleItemText">{data.content}</span>
+                    </div>
+                    <div className="articleItemBtns">
+                        <span style={thumbUpColor} onClick={()=>{this.onThumbUp()}}><i style={{verticalAlign:'2px'}} className="icon iconfont icon-good"></i><i className="itemText">{data.thumbUpNum}</i></span>
+                        <span style={thumbDownColor} onClick={()=>{this.onThumbDown()}}><i className="icon iconfont icon-bad"></i><i className="itemText">{data.thumbDownNum}</i></span>
+                        <span onClick={()=>{
+                            this.onShowComment()
+                        }}><i className="icon iconfont icon-huifu"></i><i className="itemText">{data.comments.length}</i></span>
+                        {
+                            showComments ? '' : <span onClick={()=>{this.onShowChildrenClick()}}><i style={{fontSize:'20px',float:'right'}} className={dropdownClass}></i></span>
+                        }
+                        <Button onClick={()=>{this.setState({showModal:true})}} type="dashed" style={{height:'30px',color:'#FFF',position: 'absolute',left: '712px',top: '1px'}}>续写</Button>
+                        
+                    </div>
+                    {this.renderChildren()}
+                    {this.renderComments()}
+
+                    <Modal 
+                        title="续写" 
+                        visible={this.state.showModal}
+                        onOk={this.handleModalOk.bind(this)}
+                        onCancel={this.handleModalCancel.bind(this)}
+                    >
+                        <TextArea ref={(input) => this.content = input} style={{marginTop:'20px'}} placeholder="输入内容"/>
+                    </Modal>
+                </div>
+            )
+        } else {
+            return (
+                <div className="articleItem">
+                    <div>
+                        <span className="articleItemText">{data.content}</span>
+                    </div>
+                </div>
+            )
+        }
     }
 
     renderComments(){
         const {showComments} = this.state
         const {comments} = this.props.data.data
-        if(showComments){
+        const {mode} = this.props
+
+        if(showComments && mode == 'edit'){
             return (
                 <Comments data={comments} onSubmitComment={this.onCommentClick.bind(this)} onShowCommentClick={this.onShowComment.bind(this)}></Comments>
             )
@@ -137,7 +161,7 @@ export default class ArticleItem extends Component{
     onEnterItemClick(id){
         StateManager.setArticleId(id)
         StateManager.getArticleItemList().then(()=>{
-            eventBus.emit('enterItem',{id:id})
+            eventBus.emit('enterItem')
             this.setState({showChildren:false})
         })
     }

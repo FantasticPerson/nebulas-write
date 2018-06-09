@@ -10,10 +10,10 @@ export default class Article extends Component{
     constructor(){
         super()
         this.history = StateManager.getHistory()
-        this.state = {data:null}
+        this.state = {data:null,mode:'edit'}
         EventBus.addListener('enterItem',(data)=>{
             if(this._mounted){
-            let res = StateManager.enterItem()
+                let res = StateManager.enterItem()
                 this.setState({data:res})
             }
         })
@@ -21,12 +21,11 @@ export default class Article extends Component{
 
     componentDidMount(){
         this._mounted = true
-        let pathname = this.history.location.pathname
-        let articleId = pathname.split('/')[2]
+        
 
-        StateManager.getArticleItemList(articleId).then(()=>{
+        StateManager.getArticleItemList().then(()=>{
             if(this._mounted){
-                let data = StateManager.enterItem(articleId)
+                let data = StateManager.enterItem()
                 this.setState({data:data})
             }
         })
@@ -36,15 +35,19 @@ export default class Article extends Component{
         this._mounted = false
     }
 
+    changeMode(){
+        const {mode} = this.state
+        this.setState({mode:mode=='edit'?'read':'edit'})
+    }
+
     render(){
+        const {mode} = this.state
+        let modeText = mode == 'deit' ? '阅读模式' : '普通模式'
         let contentStyle = {padding:'10px',position: 'fixed',top: '115px',bottom: '7px',overflowY: 'auto',width:'800px',margin:'4px auto',left:0,right:0}
         return(
             <div>
                 <div className="toolbar">
-                    <Button type="primary">阅读模式</Button>
-                    <Button type="primary">阅读模式</Button>
-                    <Button onClick={()=>{}} type="primary" style={{marginLeft:'5px'}}>文章列表</Button>
-                    <Pagination style={{float:'right'}} pageSize={1} defaultCurrent={1} total={10} />
+                    <Button onClick={()=>{this.changeMode()}} type="primary">阅读模式</Button>
                 </div>
                 <div style={contentStyle}>
                     {this.renderContent()}
@@ -54,10 +57,10 @@ export default class Article extends Component{
     }
 
     renderContent(){
-        const {data} = this.state
+        const {data,mode} = this.state
         if(data){
             let articleItems = data.map((item)=>{
-                return (<ArticleItem key={item.data.id} data={item}></ArticleItem>)
+                return (<ArticleItem mode={mode} key={item.data.id} data={item}></ArticleItem>)
             })
             return (
                 <div>

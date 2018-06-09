@@ -127,10 +127,22 @@ CoWriteContract.prototype = {
     saveThumbUp:function(id){
         var address = Blockchain.transaction.from;
         if(this.articles.get(id)){
+
+            var thumbDownItem = this.articleThumbDowns.get(id)
+            if(!thumbDownItem){
+                thumbDownItem = ''
+            }
+            var index = this._getIdIndexInStr(thumbDownItem,address)
+            if(index >= 0){
+                thumbDownItem = this._deleteIdFromStr(thumbDownItem,index)
+            }
+            this.articleThumbDowns.set(id,thumbDownItem)
+
             var thumbUpItem = this.articleThumbUps.get(id)
             if(!thumbUpItem){
                 thumbUpItem = ''
             }
+
             var index = this._getIdIndexInStr(thumbUpItem,address)
             if(index >= 0){
                 thumbUpItem = this._deleteIdFromStr(thumbUpItem,index)
@@ -144,6 +156,18 @@ CoWriteContract.prototype = {
     saveThumbDown:function(id){
         var address = Blockchain.transaction.from;
         if(this.articles.get(id)){
+
+            var thumbUpItem = this.articleThumbUps.get(id)
+            if(!thumbUpItem){
+                thumbUpItem = ''
+            }
+
+            var index = this._getIdIndexInStr(thumbUpItem,address)
+            if(index >= 0){
+                thumbUpItem = this._deleteIdFromStr(thumbUpItem,index)
+            }
+            this.articleThumbUps.set(id,thumbUpItem)
+
             var thumbDownItem = this.articleThumbDowns.get(id)
             if(!thumbDownItem){
                 thumbDownItem = ''
@@ -313,7 +337,7 @@ CoWriteContract.prototype = {
 
     _deleteIdFromStr:function(str,index){
         var arr = str.split(',')
-        arr.split(index,1)
+        arr.splice(index,1)
         return arr.join(',')
     },
 

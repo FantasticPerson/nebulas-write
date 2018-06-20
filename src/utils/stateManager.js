@@ -24,7 +24,7 @@ class StateManageMent{
             this.state.thumbDownList=[]
         }
 
-        this.prefix = '/nebulaecowriter'
+        this.prefix = '/nebulascowriter'
 
         this.routerPush=(path)=>{
             

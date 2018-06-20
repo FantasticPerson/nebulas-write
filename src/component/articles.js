@@ -34,7 +34,7 @@ class Articles extends Component{
 
     handleModalOk(){
         let title = this.title.input.value.trim()
-        let content = this.title.input.value.trim()
+        let content = this.content.input.value.trim()
 
         if(title.length == 0 || content.length == 0){
             alert("标题或内容为空")

@@ -33,13 +33,13 @@ class App extends Component {
 
     if(!Cookie.get('hasEntered')){
       Cookie.set('hasEntered','true',{ expires: 30})
-      StateManeger.routerPush('/home')
+      StateManeger.routerPush(`/home`)
     }
 
     else {
-      if(location.pathname == StateManeger.getPrefix()){
+      if(location.pathname == `${StateManeger.getPrefix()}/`){
         StateManeger.routerPush('/home')
-      } else if(location.pathname == '/articleItem'){
+      } else if(location.pathname == `${StateManeger.getPrefix()}/articleItem`){
         StateManeger.routerPush('/article')
       }
     }
@@ -53,10 +53,10 @@ class App extends Component {
           <Router history={history}>
             <div style={{height:'100%'}}>
               <Header></Header>
-              <Route path="/home" component={HomePage}></Route>
-              <Route path="/article" component={Articles}></Route>
-              <Route path="/articleItem" component={ArticleItems}></Route>
-              <Route path="/guide" component={Guide}></Route>
+              <Route path={`${StateManeger.getPrefix()}/home`} component={HomePage}></Route>
+              <Route path={`${StateManeger.getPrefix()}/article` }component={Articles}></Route>
+              <Route path={`${StateManeger.getPrefix()}/articleItem`} component={ArticleItems}></Route>
+              <Route path={`${StateManeger.getPrefix()}/guide`} component={Guide}></Route>
             </div>
           </Router>
         </BrowserRouter>

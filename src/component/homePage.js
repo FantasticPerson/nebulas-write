@@ -72,7 +72,7 @@ export default class HomePage extends Component{
                             textAlign: 'right',
                             fontSize: '40px',
                             fontWeight: 'bold'
-                        }}>GO<i style={{    fontSize: '34px',marginLeft: '20px'}} className="icon iconfont icon-cc-arrow-circle-right"></i></p>
+                        }}>GO<i style={{fontSize: '34px',marginLeft: '20px'}} className="icon iconfont icon-cc-arrow-circle-right"></i></p>
                     </Footer>
                 </Layout>
             </div>

@@ -1,5 +1,5 @@
 let Nebulas = require('nebulas')
-let NebPay = require('nebpay')
+let NebPay = require('nebpay')  
 
 let nebPay = new NebPay()
 let Neb = Nebulas.Neb
@@ -75,7 +75,7 @@ export function getArticles(){
 
 export function getArticleById(id){
     let callFunction = "getArticleDataById";
-    let callArgs= `[${id}]`
+    let callArgs= `["${id}"]`
     return doGetRequest(callFunction,callArgs,`getArticleById-${id}`)
 }
 
